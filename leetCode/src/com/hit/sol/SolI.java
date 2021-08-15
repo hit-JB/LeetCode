@@ -12,8 +12,11 @@ public class SolI {
     public static void main(String[] args){
         //>>代表逻辑右移，>>>代表算数右移.
         SolI sol = new SolI();
-        int[][] courses = {{1,0},{2,0},{3,1},{3,2},{0,2}};
-        System.out.println(Arrays.toString(sol.findOrder(4, courses)));
+        int[] nums1 = new int[]{2,3,4,5};
+        int[] nums2 = new int[]{1};
+        String s = "1-1+1";
+
+        System.out.println(sol.calculate("1-2*5"));
     }
     public String minNumber(int[] nums) {
         List<String> list = new ArrayList<>();
@@ -859,5 +862,134 @@ public class SolI {
             ret[i] = list.get(i)[0];
         }
         return ret;
+    }
+    public int calculate(String s) {
+        s = s.replaceAll(" ","");
+        String[] exps = s.split("-|\\+");
+        int index = 1;
+        int ret = getResult(exps[0]);
+        for(char c:s.toCharArray()){
+            if(c=='+')
+            {
+                ret += getResult(exps[index]);
+                index++;
+            }
+            if(c=='-')
+            {
+                ret -=getResult(exps[index]);
+                index++;
+            }
+        }
+        return ret;
+    }
+    public int getResult(String e){
+        String[] nums = e.split("\\*|/");
+        int ret = Integer.parseInt(nums[0]);
+        int index = 1;
+        for(char c:e.toCharArray()){
+            if(c=='/')
+            {
+                ret /= Integer.parseInt(nums[index]);
+                index++;
+            }
+            if(c=='*'){
+                ret *= Integer.parseInt(nums[index]);
+                index++;
+            }
+        }
+        return ret;
+    }
+    public int unhappyFriends(int n, int[][] preferences, int[][] pairs) {
+        Map<Integer,Integer> map = new HashMap<>();
+        for(int[] e:pairs){
+            map.put(e[0],e[1]);
+            map.put(e[1],e[0]);
+        }
+        List<List<Integer>> list = new ArrayList<>();
+        for(int[] el:preferences){
+            List<Integer> temp = new ArrayList<>();
+            for(int e:el){
+                temp.add(e);
+            }
+            list.add(temp);
+        }
+        int count = 0;
+        for(Map.Entry<Integer,Integer> e:map.entrySet()){
+            int left = e.getKey(),right = e.getValue();
+            List<Integer> leftPrefer = list.get(left);
+            int indexRight = leftPrefer.indexOf(right);
+            for(int i=0;i<indexRight;i++){
+                int friend = list.get(left).get(i);
+                int iFriend = map.get(friend);
+                List<Integer> friendPrefer = list.get(friend);
+                if(friendPrefer.indexOf(left) < friendPrefer.indexOf(iFriend))
+                {
+                    count +=1;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int length1 = nums1.length,length2 = nums2.length;
+        int loc = (length1 + length2) / 2;
+        if((length1 + length2) % 2==0)
+            return findMedian(nums1,nums2,loc,true);
+        return findMedian(nums1,nums2,loc+1,false);
+    }
+    public double findMedian(int[] nums1,int[] nums2,int loc,boolean even){
+        if(nums1.length==0)
+        {
+            if(even)
+                return (nums2[loc-1] + nums2[loc]) / 2.;
+            return nums2[loc-1];
+        }
+        if(nums2.length==0) {
+            if (even)
+                return (nums1[loc-1] + nums1[loc]) / 2.;
+            return nums1[loc-1];
+        }
+        int div = loc / 2;
+        if(div==0){
+            if(!even)
+                return Math.min(nums1[0],nums2[0]);
+            if(nums1[0] < nums2[0]){
+                int min = nums1.length > 1?nums1[1]:Integer.MAX_VALUE;
+                min = Math.min(nums2[0],min);
+                return (nums1[0] + min) / 2.;
+            }
+            int min = nums2.length > 1?nums2[1]:Integer.MAX_VALUE;
+            min = Math.min(nums1[0],min);
+            return (min + nums2[0]) / 2.;
+        }
+        int index1 = div-1,index2 = loc-div-1,num1,num2;//loc指第几个数
+        if(div>nums1.length){
+            index1 = nums1.length-1;
+            index2 = loc - nums1.length-1;
+        }else if(index2 >= nums2.length){
+            index2 = nums2.length-1;
+            index1 = loc - nums2.length - 1;
+        }
+        num1 = nums1[index1];num2 = nums2[index2];
+        int[] nums1_,nums2_;
+        if(num1 < num2){
+            nums1_ = new int[nums1.length - index1-1];
+            System.arraycopy(nums1,index1+1,nums1_,0,nums1_.length);
+            return findMedian(nums1_,nums2,loc-index1-1,even);
+        }else if(num1 == num2){
+            if(!even)
+                return num1;
+            int min = Integer.MAX_VALUE;
+            if(index1 +1 < nums1.length)
+                min = Math.min(min,nums1[index1+1]);
+            if(index2+1 < nums2.length)
+                min = Math.min(min,nums2[index2 + 1]);
+            return (num1 + min) / 2.;
+        }else{
+            nums2_ = new int[nums2.length - index2-1];
+            System.arraycopy(nums2,index2 + 1,nums2_,0,nums2_.length);
+            return findMedian(nums1,nums2_,loc - index2 - 1,even);
+        }
     }
 }
