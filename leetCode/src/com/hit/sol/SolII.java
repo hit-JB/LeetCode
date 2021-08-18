@@ -5,10 +5,7 @@ import java.util.*;
 public class SolII {
     public static void main(String[] args){
         SolII sol = new SolII();
-        long a = (long) Math.pow(2,60);
-        int[][] map = new int[][]{{0,1,0},{1,0,0},{0,0,1}};
-        int[][] cells = {{1,2},{2,1},{3,3},{2,2},{1,1},{1,3},{2,3},{3,2},{3,1}};
-        System.out.println(sol.latestDayToCross(3,3,cells));
+        sol.heapSort(new int[]{4,1,3,2,16,9,10,14,8,7});
     }
     public boolean searchMatrix(int[][] matrix, int target) {
         int row = 0,column = matrix[0].length-1;
@@ -173,5 +170,87 @@ public class SolII {
             }
         }
         return false;
+    }
+    public int latestDayToCrossII(int row, int col, int[][] cells){
+        while(true){
+
+        }
+    }
+    public static class UniNode{
+        public int x;
+        public int y;
+        public UniNode parent;
+        public UniNode(int x,int y,UniNode parent){
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+        }
+        public UniNode getRoot(UniNode parent){
+            UniNode start = this;
+            while(this.parent!=this)
+                start = this.parent;
+            return start;
+        }
+    }
+    public int countArrangement(int n) {
+        List<Integer>[] sets = new List[n];
+        for(int i=0;i<n;i++){
+            sets[i] = new ArrayList<>();
+        }
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=n;j++){
+                if(j % i==0 || i % j==0)
+                    sets[i-1].add(j);
+            }
+        }
+        int[] count = new int[1];
+        dfsArrange(n,0,new HashSet<>(),count,sets);
+        return count[0];
+    }
+    public void dfsArrange(int n,int index,Set<Integer> visited,int[] count,
+                           List<Integer>[] sets){
+        if(index==n)
+        {
+            count[0]++;
+            return;
+        }
+        for(int e:sets[index]){
+            if(visited.contains(e))
+                continue;
+            visited.add(e);
+            dfsArrange(n,index+1,visited,count,sets);
+            visited.remove(e);
+        }
+    }
+    public void heapSort(int[] nums){//原地操作heap-size = nums-size,注意在建堆的时候下标是从1开始，
+        //而数组下标从0开始
+        for(int i = nums.length / 2;i>=1;i--){
+            maxHeapFy(nums,i,nums.length);
+        }
+        System.out.println(Arrays.toString(nums));
+
+        for(int i=nums.length;i>=1;i--){
+            int temp = nums[0];
+            nums[0] = nums[i-1];
+            nums[i-1] = temp;
+            maxHeapFy(nums,1,i-1);
+        }
+        System.out.println(Arrays.toString(nums));
+    }
+    public void maxHeapFy(int[] nums,int i,int heapSize){
+        int left = 2 * i,right = 2*i+1;
+        if(left>heapSize)
+            return;
+        int largest = i;
+        if(nums[left-1] > nums[i-1])
+            largest = left;
+        if(right<=heapSize && nums[right-1] > nums[largest-1])
+            largest =right;
+        int temp = nums[i-1];
+        if(i!=largest){
+            nums[i-1] = nums[largest-1];
+            nums[largest-1] = temp;
+            maxHeapFy(nums,largest,heapSize);
+        }
     }
 }
