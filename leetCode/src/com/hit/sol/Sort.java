@@ -1,5 +1,6 @@
 package com.hit.sol;
 
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.Arrays;
 
 public class Sort {
@@ -65,5 +66,17 @@ public class Sort {
         nums[i+1] = par;
         nums[r] = temp;
         return i+1;
+    }
+    public String shortestPalindrome(String s) {
+        long base = 31,mod = (long) (Math.pow(10,9)+7);
+        long prefix = 0,suffix = 0;
+        int mul = 1;
+        for(int i=0;i<s.length();i++){
+            char c = s.charAt(i);
+            char cl = s.charAt(s.length()-i-1);
+            prefix = (c-'a' + base * prefix) % mod;
+            suffix = (suffix  + mul * cl) % mod;
+        }
+        return s;
     }
 }

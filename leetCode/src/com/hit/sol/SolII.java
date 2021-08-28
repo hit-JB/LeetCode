@@ -10,9 +10,7 @@ public class SolII {
 //        [94,92,90,57,6,89,63,15,91,74]
 //        6
 
-        System.out.println(sol.findCheapestPrice(5,new int[][]{
-                {4,1,1},{1,2,3},{0,3,2},{0,4,10},{3,1,1},{1,4,3}
-        },2,1,1));
+        System.out.println(Arrays.toString(sol.computePrefix("ababababca")));
     }
     public boolean searchMatrix(int[][] matrix, int target) {
         int row = 0,column = matrix[0].length-1;
@@ -1067,5 +1065,19 @@ public class SolII {
             System.arraycopy(dp,0,dpPrev,0,dp.length);
         }
         return dp[dst]==Integer.MAX_VALUE?-1: (int) dp[dst];
+    }
+    public int[] computePrefix(String p){
+         int m = p.length();
+         int[] ret = new int[m];
+         ret[0]  = -1;
+         int k = -1;
+         for(int q = 1;q<m;q++){
+             while(k>-1 && p.charAt(k+1)!=p.charAt(q))
+                 k = ret[k];
+             if(p.charAt(k+1)==p.charAt(q))
+                 k+=1;
+             ret[q] = k;
+         }
+         return ret;
     }
 }
