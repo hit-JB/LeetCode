@@ -8,9 +8,16 @@ import java.util.*;
 public class SolIII {
     public static void main(String[] args){
         SolIII sol = new SolIII();
-        int[][] roads = new int[][]{{0,6,7},{0,1,2},{1,2,3},{1,3,3},
-                {6,3,3},{3,5,1},{6,5,1},{2,5,1},{0,4,5}};
-        System.out.println(sol.countPaths(7,roads));
+        //
+        //[2,3,3,4,4,4,5,6,7,10]
+        //12
+        //System.out.println(sol.minSessions(new int[]{1,2,3,4,5},15));
+       // System.out.println(sol.index(Arrays.asList(1,2,3),3));
+        List<List<Integer>> ret = new ArrayList<>();
+        sol.dfs(new int[]{2,3,3,4,4,4,5,6,7,10},
+                new int[10],ret,new ArrayList<>(),0,12,0);
+        System.out.println(ret);
+
 
     }
     public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
@@ -308,4 +315,106 @@ public class SolIII {
         }
         return dp[dp.length-1][dp[0].length-1];
     }
+    public int sumOddLengthSubarrays(int[] arr) {
+        int length = arr.length;
+        int[] size = new int[length];
+        for(int i=0;i<length;i++){
+            for(int j=1;j<=length - i;j++){
+                if(j % 2 ==1)
+                    for(int k=0;k<j;k++){
+                        size[i+k]++;
+                    }
+            }
+        }
+        int sum = 0;
+        for(int i=0;i<arr.length;i++){
+            sum += size[i] * arr[i];
+        }
+        return sum;
+    }
+    public int minimumDifference(int[] nums, int k) {
+        List<Integer> list = new ArrayList<>();
+        for(int e:nums)list.add(e);
+        list.sort(Integer::compare);
+        int ret = Integer.MAX_VALUE;
+        for(int i=0;i<=list.size()-k;i++){
+            ret = Math.min(list.get(i+k-1) - list.get(i),ret);
+        }
+        return ret;
+    }
+    public String kthLargestNumber(String[] nums, int k) {
+        Comparator<String> comparator = new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if(o1.length()>o2.length())
+                    return 1;
+                else if(o1.length()<o2.length())
+                    return -1;
+                else{
+                    int i=0;
+                    int length = o1.length();
+                    while(i<length && o1.charAt(i)==o2.charAt(i))
+                        i++;
+                    if(i==length)
+                        return 0;
+                    return o1.charAt(i)-o2.charAt(i);
+                }
+            }
+        };
+        List<String> list = new ArrayList<>(Arrays.asList(nums));
+        list.sort(comparator);
+        return list.get(list.size()-k);
+     }
+    public int minSessions(int[] tasks, int sessionTime) {
+        return 0;
+    }
+    public void dfsPack(int[] tasks,int[]visited,
+                        int count,int[] ret,int sessionTime){
+
+    }
+    public void dfs(int[] tasks,int[] visited,
+                    List<List<Integer>> ret,
+                    List<Integer> combine,
+                    int sum,int sessionTime,int index){
+        if(combine.isEmpty())
+        {
+            for(int i=0;i<visited.length;i++){
+                if(visited[i]==0)
+                {
+                    sum = tasks[i];
+                    combine.add(i);
+                    visited[i] = 1;
+                    break;
+                }
+            }
+        }
+        for(int i=index;i<visited.length;i++){
+            if(visited[i]==0 && sum+tasks[i]<=sessionTime) {
+                visited[i] = 1;
+                combine.add(i);
+                dfs(tasks, visited,
+                        ret,combine, sum + tasks[i], sessionTime,i+1);
+                visited[i] = 0;
+                combine.remove(combine.size()-1);
+            }
+        }
+        ret.add(new ArrayList<>(combine.subList(0,combine.size()-1)));
+    }
+    public int index(List<Integer> nums,int target){
+        int left = -1,right = nums.size(),mid = (left + right) / 2;
+        while (left<right-1){
+            if(nums.get(mid)<=target){
+                left = mid;
+            }else
+            {
+                right = mid;
+            }
+            mid = (left + right) / 2;
+        }
+        return left;
+    }
+    public int numberOfUniqueGoodSubsequences(String binary) {
+        return 0;
+    }
+
 }

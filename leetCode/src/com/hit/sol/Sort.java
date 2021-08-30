@@ -7,8 +7,7 @@ public class Sort {
     public static void main(String[] args){
         Sort sort = new Sort();
         int[] nums = new int[]{4,1,3,2,16,9,10,14,8,7};
-        sort.quickSort(nums,0,nums.length-1);
-        System.out.println(Arrays.toString(nums));
+        System.out.println(sort.findKNums(nums,0,nums.length-1,2));
     }
     public void heapSort(int[] nums){//原地操作heap-size = nums-size,注意在建堆的时候下标是从1开始，
         //而数组下标从0开始
@@ -78,5 +77,26 @@ public class Sort {
             suffix = (suffix  + mul * cl) % mod;
         }
         return s;
+    }
+    public int findKNums(int[] nums,int p,int r,int k){
+        int par = nums[r];
+        int i = p-1;
+        for(int j=p;j<=r-1;j++){
+            if(nums[j]<=par){
+                i=i+1;
+                int temp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = temp;
+            }
+        }
+        int temp = nums[i+1];
+        nums[i+1] = par;
+        nums[r] = temp;
+        if(i+2-p==k)
+            return par;
+        else if(i+2-p<k)
+            return findKNums(nums,i+2,r,k-(i+2-p));
+        else
+            return findKNums(nums,p,i,k-1);
     }
 }
