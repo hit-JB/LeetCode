@@ -3,8 +3,6 @@ package com.hit.sol;
 import com.hit.bean.ListNode;
 import com.hit.bean.TreeNode;
 import com.sun.source.tree.Tree;
-import org.jetbrains.annotations.NotNull;
-
 
 import java.util.*;
 
@@ -512,7 +510,7 @@ public class SolI {
             sum+=priorityQueue.poll();
         return sum;
     }
-    public int minSwaps(@NotNull String s) {
+    public int minSwaps( String s) {
         //]]][[["
         if(s.length()==0)
             return 0;
