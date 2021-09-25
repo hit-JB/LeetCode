@@ -1,7 +1,10 @@
 package com.hit.sol;
 
+
+import com.hit.bean.Node;
+
 import java.lang.reflect.MalformedParameterizedTypeException;
-import java.util.Arrays;
+import java.util.*;
 
 public class Sort {
     public static void main(String[] args){
@@ -98,5 +101,42 @@ public class Sort {
             return findKNums(nums,i+2,r,k-(i+2-p));
         else
             return findKNums(nums,p,i,k-1);
+    }
+    public Node flatten(Node head) {
+        return null;
+    }
+    public boolean isPossibleDivide(int[] nums, int k) {
+        Map<Integer,Integer> map = new HashMap<>();
+        if(nums.length % k !=0)
+            return false;
+        for(int e:nums)
+        {
+            map.put(e,map.getOrDefault(e,0)+1);
+        }
+        List<Map.Entry<Integer,Integer>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByKey());
+        while(!map.isEmpty()){
+            Map.Entry<Integer,Integer> first = list.get(0);
+            int key = first.getKey();
+            int value = first.getValue();
+            if(value==0)
+            {
+                list.remove(0);
+                continue;
+            }
+            try {
+                for(int i=0;i<k;i++){
+                    map.put(key+i,map.get(key+i)-1);
+                    if(map.get(key+i)==0)
+                        map.remove(key+i);
+                }
+            }catch (Exception e){
+                return false;
+            }
+        }
+        return true;
+    }
+    public int numRabbits(int[] answers) {
+        return 0;
     }
 }
