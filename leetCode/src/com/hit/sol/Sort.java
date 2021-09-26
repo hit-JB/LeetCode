@@ -137,6 +137,23 @@ public class Sort {
         return true;
     }
     public int numRabbits(int[] answers) {
-        return 0;
+        Map<Integer,Integer> map = new HashMap<>();
+        for(int e:answers)
+            map.put(e,map.getOrDefault(e,0)+1);
+        int sum = 0;
+        for(Map.Entry<Integer,Integer> e:map.entrySet()){
+            int key = e.getKey();
+            int value = e.getValue();
+            if(key>=value){
+                sum = sum+key+1;
+            }else{
+                int group = value / (key+1);
+                int remain = value % (key+1);
+                sum += group * (key+1);
+                if(remain!=0)
+                    sum += (key+1);
+            }
+        }
+        return sum;
     }
 }
