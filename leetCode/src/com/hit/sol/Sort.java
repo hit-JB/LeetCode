@@ -10,7 +10,7 @@ public class Sort {
     public static void main(String[] args){
         Sort sort = new Sort();
         int[] nums = new int[]{4,1,3,2,16,9,10,14,8,7};
-        System.out.println(sort.findKNums(nums,0,nums.length-1,2));
+        System.out.println(sort.makesquare(new int[]{1,1,2,2,2}));
     }
     public void heapSort(int[] nums){//原地操作heap-size = nums-size,注意在建堆的时候下标是从1开始，
         //而数组下标从0开始
@@ -155,5 +155,49 @@ public class Sort {
             }
         }
         return sum;
+    }
+    public boolean makesquare(int[] matchsticks) {
+        long sum = 0;
+        for(int e:matchsticks){
+            sum +=e ;
+        }
+        if(sum % 4!=0)
+            return false;
+        long a = sum / 4;
+        Map<Integer,Boolean> map = new HashMap<>();
+        Map<Integer,Boolean> can = new HashMap<>(1<<matchsticks.length);
+        preManager(map,matchsticks,a,0,0);
+        manager(can,map,(1<<matchsticks.length)-1);
+        return can.get((1<<matchsticks.length)-1);
+    }
+    public void manager(Map<Integer,Boolean> can, Map<Integer,Boolean> map,int code){
+        if(can.containsKey(code) || map.containsKey(code)) {
+            if(map.containsKey(code))
+                can.put(code,true);
+            return;
+        }
+        boolean is;
+        for(Map.Entry<Integer,Boolean> e:map.entrySet()){
+            int num = e.getKey();
+            if((num | code) == code){
+                manager(can,map,code ^ num);
+                is = can.get(code ^ num);
+                if(is) {
+                    can.put(code,true);
+                    return;
+                }
+            }
+        }
+        can.put(code,false);
+    }
+    public void preManager(Map<Integer,Boolean> map,int[] matchsticks,
+                           long a,int code,int index){
+        if(a==0)
+            map.put(code,true);
+        for(int i=index;i<matchsticks.length;i++){
+            if(a - matchsticks[i]>=0){
+                preManager(map,matchsticks,a-matchsticks[i],code | (1<<i),i+1);
+            }
+        }
     }
 }
