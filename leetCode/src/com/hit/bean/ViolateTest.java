@@ -1,6 +1,7 @@
 package com.hit.bean;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ViolateTest {
     public static volatile int race = 0;
@@ -29,8 +30,7 @@ public class ViolateTest {
 //            Thread.yield();
 //        }
 //        System.out.println("Finally count:"+race);
-        System.out.println("{".compareTo("z"));
-        System.out.println((char) ('z'+1));
+        ReentrantLock reentrantLock = new ReentrantLock();
     }
     public int findCenter(int[][] edges) {
         int N = edges.length;
@@ -116,4 +116,111 @@ public class ViolateTest {
         }
         return list;
     }
+    static class  CustomStack {
+        private final Stack<Integer> stack = new Stack<>();
+        private final int maxSize;
+        public CustomStack(int maxSize) {
+            this.maxSize = maxSize;
+        }
+
+        public void push(int x) {
+            if(stack.size()<=this.maxSize){
+                this.stack.push(x);
+            }
+        }
+
+        public int pop() {
+            return stack.isEmpty()?-1:stack.pop();
+        }
+
+        public void increment(int k, int val) {
+            for(int i=0;i<Math.min(k,stack.size());i++){
+                stack.set(i,stack.get(i)+val);
+            }
+        }
+    }
+    static class MyCalendarTwo {
+        private TreeNode root;
+        private final TreeNode nil = new TreeNode();
+        public MyCalendarTwo() {
+            root = null;
+        }
+
+        public boolean book(int start, int end) {
+            if(root==null){
+                root = new TreeNode();
+                root.value[0] = start;
+                root.value[1] = end;
+                root.max = end;
+                root.left = nil;
+                root.right = nil;
+                root.parent = null;
+                return true;
+            }
+            int count = 0;
+            int[] d = new int[]{start,end};
+            TreeNode node = root;
+            TreeNode prev;
+            while(node!=nil){
+                prev = node;
+                if(isInsert(node.value,d)){
+                    count++;
+                }
+                if(node.left!=nil && node.left.max > start){
+                    node = node.left;
+                }else{
+                    node = node.right;
+                }
+            }
+            if(count>=2){
+                return false;
+            }
+            insertNode(d);
+            return true;
+        }
+        public void insertNode(int[] val){
+            TreeNode node = root;
+            TreeNode prev = null;
+            while(node!=nil){
+                prev = node;
+                if(val[0]<=node.value[0]){
+                    node = node.left;
+                }else{
+                    node = node.right;
+                }
+            }
+            TreeNode add = new TreeNode();
+            add.value = val;
+            add.left = nil;
+            add.right = nil;
+            add.parent = prev;
+            add.max = val[1];
+            if(val[0]<=prev.value[0]){
+                prev.left = add;
+            }else{
+                prev.right = add;
+            }
+            node = prev;
+            while(node!=root){
+                int l = node.left==null?Integer.MIN_VALUE:node.left.max;
+                int r = node.right==null?Integer.MIN_VALUE:node.right.max;
+                node.max=Math.max(node.max,Math.max(l,r));
+                node = node.parent;
+            }
+        }
+        public boolean isInsert(int[] val1,int[] val2){
+            return val2[0]>=val1[0] && val2[0]<val1[1] ||
+                    val1[0]>=val2[0] && val1[0]<val2[1];
+        }
+        static class TreeNode{
+            public int[] value;
+            public int max;
+            public TreeNode left;
+            public TreeNode right;
+            public TreeNode parent;
+            public TreeNode(){
+            }
+        }
+    }
+
 }

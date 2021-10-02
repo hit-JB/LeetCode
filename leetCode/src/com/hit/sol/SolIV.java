@@ -12,7 +12,7 @@ public class SolIV {
         //[[0,1],[1,2]]
         //[]
         SolIV sol =  new SolIV();
-        System.out.println(sol.toHex(-1));
+        System.out.println(sol.numberOfArrays("1317",2000));
     }
     public int balancedStringSplit(String s) {
         int l = 0,r = 0;
@@ -826,5 +826,23 @@ public class SolIV {
             }
         }
         return builder.toString();
+    }
+    public int numberOfArrays(String s, int k) {
+        long[] dp = new long[s.length()+1];
+        long mod = (long) (Math.pow(10,9)+7);
+        int length = (int) (Math.log(k) / Math.log(10));
+        for(int i=1;i<=s.length();i++){
+            long n = 0;
+            long mul = 1;
+            for(int j=i;j>=i-length && j>0;j--){
+                int num = s.charAt(j-1)-'0';
+                n = n + mul* num;
+                mul *=10;
+                if(num !=0 && n<=k && n>=1){
+                    dp[i] = (dp[i] + (j-1==0?1:dp[j-1])) % mod;
+                }
+            }
+        }
+        return (int) dp[dp.length-1];
     }
 }
