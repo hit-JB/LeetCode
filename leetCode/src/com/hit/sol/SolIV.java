@@ -2,6 +2,7 @@ package com.hit.sol;
 
 import com.hit.bean.ListNode;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class SolIV {
@@ -11,10 +12,7 @@ public class SolIV {
         //[[0,1],[1,2]]
         //[]
         SolIV sol =  new SolIV();
-        String s = "-1/2";
-        String[] nums = s.split("/");
-        System.out.println(sol.isRobotBounded("RRGRRGLLLRLGGLGLLGRLRLGLRLRRGLGGLLRRRLRLRLLGRGLGRRRGRLG"
-        ));
+        System.out.println(sol.toHex(-1));
     }
     public int balancedStringSplit(String s) {
         int l = 0,r = 0;
@@ -664,5 +662,169 @@ public class SolIV {
         }
         int com = dp[dp.length-1][dp[0].length-1];
         return word1.length() + word2.length() - 2 * com;
+    }
+    public int maxProduct(String s) {
+        int N = s.length();
+        int[] dp = new int[1<<N];
+        for(int i=1;i<1<<N;i++){
+            String num = Integer.toBinaryString(i);
+            int left = 0,right = num.lastIndexOf('1');
+            if(left==right){
+                dp[i] = 1;
+            }else{
+                int length = num.length();
+                int s_length = s.length();
+                int bit1 = 1<<(length-1);
+                int bit2 = 1<<(length-1-right);
+                if(s.charAt(s_length -length + right) == s.charAt(s_length - length + left)){
+                    dp[i] = 2+dp[i^bit1^bit2];
+                }else{
+                    dp[i] = Math.max(dp[i^bit1],dp[i^bit2]);
+                }
+            }
+        }
+        int ret = Integer.MIN_VALUE;
+        for(int i=0;i<1<<N;i++){
+            ret = Math.max(ret,dp[i] * dp[~i & ((1<<N)-1)]);
+        }
+        return ret;
+    }
+    public String destCity(List<List<String>> paths) {
+        Set<String> start = new HashSet<>();
+        for(List<String> e:paths){
+            start.add(e.get(0));
+        }
+        for(List<String> e:paths){
+            if(start.contains(e.get(1))){
+                continue;
+            }
+            return e.get(1);
+        }
+        return null;
+    }
+    public int[] memLeak(int memory1, int memory2) {
+        int i=1;
+        while(i<=memory1 || i<= memory2){
+            if(memory1>=memory2){
+                memory1 -=i;
+            }
+            else
+                memory2 -=i;
+            i++;
+        }
+        return new int[]{i,memory1,memory2};
+    }
+    public int largestAltitude(int[] gain) {
+        int max = Integer.MIN_VALUE;
+        int h = 0;
+        for(int e:gain){
+            h+= e;
+            max = Math.max(max,h);
+        }
+        return Math.max(max, 0);
+    }
+    public int minCount(int[] coins) {
+        int count = 0;
+        for(int e:coins){
+            if(e % 2==0)
+                count += e / 2;
+            else{
+                count += (e/2)+1;
+            }
+        }
+        return count;
+    }
+    public int findLUSlength(String[] strs) {
+        List<String > list = new ArrayList<>(Arrays.asList(strs));
+        list.sort((e1,e2)-> e2.length() - e1.length());
+        for(int i=0;i<list.size();i++){
+            boolean is = true;
+            for(int j=i-1;j>=0;j--){
+                if(checkSubs(list.get(i),list.get(j))){
+                    is = false;
+                    break;
+                }
+            }
+            if(is){
+                for(int k=i+1;k<list.size() && list.get(k).length()==list.get(i).length();k++){
+                    if(list.get(k).equals(list.get(i))) {
+                        is = false;
+                        break;
+                    }
+                }
+            }
+            if(is)
+                return list.get(i).length();
+        }
+        return -1;
+    }
+    public boolean checkSubs(String s1,String s2){
+        int p=0,q = 0;
+        while(p<s1.length() && q<s2.length()){
+            if(s1.charAt(p) == s2.charAt(q)){
+                p++;
+            }
+            q++;
+        }
+        return p==s1.length();
+    }
+    public int countNumbersWithUniqueDigits(int n) {
+        int ret = 0;
+        for(int i=n;i>=1;i--){
+            int mul = 9;
+            for(int j=0;j<i-1;j++)
+            {
+                mul *=(9-j);
+            }
+            ret += mul;
+        }
+        return ret+1;//计算各位数字都不同的数字数目
+    }
+    public int countNumbersDp(int n){
+        int[] dp = new int[n];
+        dp[0] = 9;
+        for(int i=1;i<n;i++){
+            dp[i] = 8 * dp[i-1] + 9 * (i-2>=0?dp[i-2]:1);
+        }
+        return dp[dp.length-1];
+    }
+    public String toHex(int num) {
+        long n = num;
+        if(n==0)
+            return "0";
+        boolean negative  = n<0;
+        n = Math.abs(n);
+        StringBuilder builder = new StringBuilder();
+        List<Long> list = new ArrayList<>();
+        while(n >0){
+            list.add(n % 16);
+            n = n / 16;
+        }
+        Collections.reverse(list);
+        if(negative){
+            for(int i=0;i<list.size();i++){
+                list.set(i,15-list.get(i));
+            }
+            Collections.reverse(list);
+            long carry = 1;
+            for(int i=0;i<list.size();i++){
+                long n_ = (list.get(i) +carry) % 16;
+                carry = (list.get(i) + carry) / 16;
+                list.set(i,n_);
+            }
+            if(carry==1)
+                list.add(carry);
+            Collections.reverse(list);
+            builder.append("f".repeat(8 - list.size()));
+        }
+        for(long e:list){
+            if(e<10)
+            builder.append(e);
+            else{
+                char c = (char) (e-10+'a');
+                builder.append(c);
+            }
+        }
+        return builder.toString();
     }
 }
