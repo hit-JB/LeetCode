@@ -1,5 +1,6 @@
 package com.hit.bean;
 
+import javax.swing.plaf.TableHeaderUI;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,25 +12,22 @@ public class ViolateTest {
     private static final int THREADS_COUNT = 20;
 
     public static void main(String[] args) {
-//        Thread[] threads = new Thread[THREADS_COUNT];
-//        for(int i=0;i<THREADS_COUNT;i++){
-//            threads[i] = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    System.out.println("Thread Name:"+Thread.currentThread().getName());
-//                    for(int i=0;i<10000;i++){
-//                        increase();
-//                    }
-//                    System.out.println("Thread finally:"+Thread.currentThread().getName());
-//                }
-//            });
-//            threads[i].start();
-//        }
-//        System.out.println("Main thread:"+Thread.currentThread().getName());
-//        while (Thread.activeCount()>2) {
-//            Thread.yield();
-//        }
-//        System.out.println("Finally count:"+race);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("this is a  thread");
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+        while(Thread.activeCount()>2)
+            Thread.yield();
+
         ReentrantLock reentrantLock = new ReentrantLock();
     }
     public int findCenter(int[][] edges) {
