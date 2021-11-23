@@ -10,4 +10,15 @@ public class ListNode {
          val = x;
          next = null;
       }
+
+    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        ClassLoader classLoader = ListNode.class.getClassLoader();
+        Class<?> aClass = classLoader.loadClass("com.hit.bean.Node");
+        Node o = (Node) aClass.newInstance();
+        o.child = null;
+        o.next = null;
+        o.val = 999;
+        o.prev = null;
+        System.out.println(o);
+    }
   }
