@@ -3,14 +3,27 @@ package com.hit.sol;
 
 import com.hit.bean.Node;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.MalformedParameterizedTypeException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 public class Sort {
+    public static interface count{
+        int getNum();
+    }
+    public static class countImpl implements count{
+
+        @Override
+        public int getNum() {
+            return 0;
+        }
+    }
     public static void main(String[] args){
         Sort sort = new Sort();
-        int[] nums = new int[]{4,1,3,2,16,9,10,14,8,7};
-        System.out.println(sort.findKNums(nums,0,nums.length-1,2));
+        int[] ints = sort.nextGreaterElement(new int[]{2, 4}, new int[]{1, 2, 3, 4});
+        System.out.println(Arrays.toString(ints));
     }
     public void heapSort(int[] nums){//原地操作heap-size = nums-size,注意在建堆的时候下标是从1开始，
         //而数组下标从0开始
@@ -138,5 +151,23 @@ public class Sort {
     }
     public int numRabbits(int[] answers) {
         return 0;
+    }
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int[] ret = new int [n];
+        Stack<Integer> stack = new Stack<>();
+        Map<Integer,Integer> map  =new HashMap<>();
+        for(int i=n-1;i>=0;i--){
+            int num = nums2[i];
+            while(!stack.isEmpty() && num >=stack.peek() ){
+                stack.pop();
+            }
+            map.put(num,stack.isEmpty()?-1:stack.peek());
+            stack.push(num);
+        }
+        for(int i=0;i<n;i++){
+            ret[i] = map.getOrDefault(nums1[i],-1);
+        }
+        return ret;
     }
 }
